@@ -1,0 +1,82 @@
+POST http://localhost:3000/v1/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "first_name": "User",
+  "last_name": "Example",
+  "username": "user123"
+}
+###
+POST http://localhost:3000/v1/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+###
+GET http://localhost:3000/v1/auth/user/3 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+###
+GET http://localhost:3000/v1/auth/user/email/user@example.com HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+###
+PUT http://localhost:3000/v1/auth/user/3 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+
+{
+  "first_name": "Updated",
+  "last_name": "User"
+}
+###
+PUT http://localhost:3000/v1/auth/user/3/password HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+
+{
+  "new_password": "new_password123"
+}
+###
+DELETE http://localhost:3000/v1/auth/user/3 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+###
+POST http://localhost:3000/v1/auth/books HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+
+{
+  "title": "Book 1",
+  "author": "Author 1",
+  "price": 100,
+  "stock": 100
+}
+###
+GET http://localhost:3000/v1/auth/books HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+###
+GET http://localhost:3000/v1/auth/books/2 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+###
+PUT http://localhost:3000/v1/auth/books/2 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+
+{
+  "title": "Book 2",
+  "author": "Author 2",
+  "price": 1,
+  "stock": 1
+}
+###
+DELETE http://localhost:3000/v1/auth/books/2 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk1NTk4NTUsInN1YiI6IjMifQ.ctJRRygQ7ZN8A9Miu9GcVkYdlUV_syLZznJr1Xg9zYE
+Content-Type: application/json
+###
