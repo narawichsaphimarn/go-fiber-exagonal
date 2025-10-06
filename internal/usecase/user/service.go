@@ -21,7 +21,7 @@ func NewUserService(repo ports.UserRepository, tokenProvider ports.TokenProvider
 func (s *UserService) Register(ctx context.Context, user *domain.User) error {
 	// Validate user input
 	if err := pkg.ValidateStruct(ctx, user); err != nil {
-		return err
+		return pkg.ErrValidationError
 	}
 	// Check if user already exists
 	userDB, err := s.repo.GetUserByEmail(ctx, user.Email)
@@ -44,7 +44,7 @@ func (s *UserService) Register(ctx context.Context, user *domain.User) error {
 func (s *UserService) Login(ctx context.Context, user *domain.AuthRequest) (string, error) {
 	// Validate user input
 	if err := pkg.ValidateStruct(ctx, user); err != nil {
-		return "", err
+		return "", pkg.ErrValidationError
 	}
 	// Get user by email
 	userDB, err := s.repo.GetUserByEmail(ctx, user.Email)
@@ -82,7 +82,7 @@ func (s *UserService) GetAllUsers(ctx context.Context) ([]*domain.User, error) {
 func (s *UserService) UpdateUser(ctx context.Context, id int, user *domain.UpdateUserRequest) error {
 	// Validate user input
 	if err := pkg.ValidateStruct(ctx, user); err != nil {
-		return err
+		return pkg.ErrValidationError
 	}
 	userDB, err := s.repo.GetUserByID(ctx, strconv.Itoa(id))
 	if err != nil {
@@ -105,7 +105,7 @@ func (s *UserService) DeleteUser(ctx context.Context, id int) error {
 func (s *UserService) UpdatePassword(ctx context.Context, id int, req domain.UpdatePasswordRequest) error {
 	// Validate password
 	if err := pkg.ValidateStruct(ctx, req); err != nil {
-		return err
+		return pkg.ErrValidationError
 	}
 	// Check if user exists
 	userDB, err := s.repo.GetUserByID(ctx, strconv.Itoa(id))
