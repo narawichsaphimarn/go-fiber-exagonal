@@ -19,6 +19,18 @@ func NewUserService(repo ports.UserRepository, tokenProvider ports.TokenProvider
 }
 
 func (s *UserService) Register(ctx context.Context, user *domain.User) error {
+	// Validate user input
+	if err := pkg.ValidateStruct(ctx, user); err != nil {
+		return err
+	}
+	// Check if user already exists
+	userDB, err := s.repo.GetUserByEmail(ctx, user.Email)
+	if err != nil {
+		return err
+	}
+	if userDB != nil && userDB.ID > 0 {
+		return pkg.ErrUserAlreadyExists
+	}
 	// Hash password
 	hashedPassword, err := pkg.HashPassword(user.Password)
 	if err != nil {
@@ -38,6 +50,9 @@ func (s *UserService) Login(ctx context.Context, user *domain.AuthRequest) (stri
 	userDB, err := s.repo.GetUserByEmail(ctx, user.Email)
 	if err != nil {
 		return "", err
+	}
+	if userDB == nil || userDB.ID == 0 {
+		return "", pkg.ErrUserNotFound
 	}
 	// Compare password
 	err = userDB.ComparePassword(user.Password)
@@ -64,17 +79,44 @@ func (s *UserService) GetAllUsers(ctx context.Context) ([]*domain.User, error) {
 	return s.repo.GetAllUsers(ctx)
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, user *domain.User) error {
-	return s.repo.UpdateUser(ctx, user)
+func (s *UserService) UpdateUser(ctx context.Context, id int, user *domain.UpdateUserRequest) error {
+	// Validate user input
+	if err := pkg.ValidateStruct(ctx, user); err != nil {
+		return err
+	}
+	userDB, err := s.repo.GetUserByID(ctx, strconv.Itoa(id))
+	if err != nil {
+		return err
+	}
+	if userDB == nil || userDB.ID == 0 {
+		return pkg.ErrUserNotFound
+	}
+	return s.repo.UpdateUser(ctx, &domain.User{
+		ID:        id,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+	})
 }
 
 func (s *UserService) DeleteUser(ctx context.Context, id int) error {
 	return s.repo.DeleteUser(ctx, id)
 }
 
-func (s *UserService) UpdatePassword(ctx context.Context, id int, password string) error {
+func (s *UserService) UpdatePassword(ctx context.Context, id int, req domain.UpdatePasswordRequest) error {
+	// Validate password
+	if err := pkg.ValidateStruct(ctx, req); err != nil {
+		return err
+	}
+	// Check if user exists
+	userDB, err := s.repo.GetUserByID(ctx, strconv.Itoa(id))
+	if err != nil {
+		return err
+	}
+	if userDB == nil || userDB.ID == 0 {
+		return pkg.ErrUserNotFound
+	}
 	// Hash password
-	hashedPassword, err := pkg.HashPassword(password)
+	hashedPassword, err := pkg.HashPassword(req.NewPassword)
 	if err != nil {
 		return err
 	}

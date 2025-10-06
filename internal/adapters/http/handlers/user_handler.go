@@ -40,9 +40,6 @@ func (h *UserHandler) RegisterUser(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := pkg.ValidateStruct(ctx, &user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
 	if err := h.service.Register(ctx, &user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -56,9 +53,6 @@ func (h *UserHandler) LoginUser(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := pkg.ValidateStruct(ctx, &user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
 	token, err := h.service.Login(ctx, &user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -112,14 +106,7 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := pkg.ValidateStruct(ctx, &user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	var u domain.User
-	u.FirstName = user.FirstName
-	u.LastName = user.LastName
-	u.ID = id
-	if err := h.service.UpdateUser(ctx, &u); err != nil {
+	if err := h.service.UpdateUser(ctx, id, &user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "user updated"})
@@ -152,7 +139,7 @@ func (h *UserHandler) UpdatePassword(c *fiber.Ctx) error {
 	if err := pkg.ValidateStruct(ctx, &req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	if err := h.service.UpdatePassword(ctx, id, req.NewPassword); err != nil {
+	if err := h.service.UpdatePassword(ctx, id, req); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "password updated"})
